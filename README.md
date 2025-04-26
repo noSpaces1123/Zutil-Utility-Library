@@ -106,11 +106,11 @@ Returns `x` if `x > 0`, otherwise returns `0`.
 ##### `zutil.weighted(t)`
 Returns a random value from table `t`, where the values of `t` are fields equal to their weight. For example, with `zutil.weighted({ lion = 2, bear = 1 })`, this function is two times more likely to return `"lion"` than `"bear"`.
 
-### `zutil.weightedbool(trueWeight)`
+##### `zutil.weightedbool(trueWeight)`
 Supply a percentage `trueWeight` where `0 ≤ trueWeight ≤ 100`. Returns `true` `trueWeight`% of the time.
 
-### `zutil.randomchoice(t)`
+##### `zutil.randomchoice(t)`
 Returns a random element from table `t`.
 
-### `zutil.alwaysrandom()`
+##### `zutil.alwaysrandom()`
 Sets the random seed to `os.time()`: `math.randomseed(os.time())`. Returns the seed used.

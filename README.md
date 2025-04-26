@@ -1,6 +1,13 @@
 # Zutil-Utility-Library
 Utility library, some tools including Löve2D.
-Below, the tools of Zutil are listed.
+
+## Download
+Press the green "Code" button and hit "Download .ZIP". Copy the zutil.lua file into your game's files, in the same directory as the rest of your code.
+Then, write the following at the very top line of your main.lua file:
+
+`local zutil = require "zutil.lua"`
+
+All done! Enjoy.
 
 ## Tools
 

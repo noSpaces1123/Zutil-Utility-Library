@@ -310,6 +310,13 @@ function zutil.randomchoice(t)
     return t[math.random(#t)]
 end
 
+--Sets the random seed to `os.time()`: `math.randomseed(os.time())`. Returns the seed used.
+function zutil.alwaysrandom()
+    local seed = os.time()
+    math.randomseed(seed)
+    return seed
+end
+
 
 
 

@@ -11,6 +11,8 @@ All done! Enjoy.
 
 ## Tools
 
+###### All random-based functions below function off of Lua's built-in `math.random()` function. If you're getting identical or similar results between each running instance of your code, make sure you're setting the random seed beforehand with `math.randomseed(seed)` or with `zutil.alwaysrandom()`.
+
 ##### `zutil.jitter(amplitude)`
 Supply an amplitude. Returns a random value between `amplitude * -1` and `amplitude`.
 
@@ -109,3 +111,6 @@ Supply a percentage `trueWeight` where `0 ≤ trueWeight ≤ 100`. Returns `true
 
 ### `zutil.randomchoice(t)`
 Returns a random element from table `t`.
+
+### `zutil.alwaysrandom()`
+Sets the random seed to `os.time()`: `math.randomseed(os.time())`. Returns the seed used.

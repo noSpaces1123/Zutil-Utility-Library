@@ -217,7 +217,7 @@ function zutil.updatetimer(timer, completeFunction, speed, dt)
     timer.current = timer.current + speed * dt
     if timer.current > timer.max then
         timer.current = timer.current - timer.max
-        completeFunction()
+        if completeFunction then completeFunction() end
     end
     return timer
 end

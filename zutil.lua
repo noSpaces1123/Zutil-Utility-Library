@@ -1,6 +1,6 @@
 -- MIT License
 
--- Copyright (c) 2025 Adam Lensch
+-- Copyright (c) 2025 frazy
 
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +20,13 @@
 -- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 -- SOFTWARE.
 
+
+
+---@diagnostic disable: undefined-global
+
 local zutil = { _version = "1.0" }
+
+
 
 --Supply an amplitude. Returns a random value between `amplitude * -1` and `amplitude`.
 function zutil.jitter(amplitude)
@@ -40,23 +46,28 @@ function zutil.touching(x1, y1, w1, h1, x2, y2, w2, h2)
     return x1 + w1 >= x2 and y1 + h1 >= y2 and x1 <= x2 + w2 and y1 <= y2 + h2
 end
 
---Simple easing function. Supply a value x where `0 ≤ x ≤ 1`.
-function zutil.easeOutQuint(x)
+--Simple easing function. Supply a value `x` where `0 ≤ x ≤ 1`.
+function zutil.easing.easeOutQuint(x)
     return 1 - (1 - x)^5
 end
 
---Simple easing function. Supply a value x where `0 ≤ x ≤ 1`
-function zutil.easeInQuint(x)
+--Simple easing function. Supply a value `x` where `0 ≤ x ≤ 1`
+function zutil.easing.easeInQuint(x)
     return x^5
 end
 
---Simple easing function. Supply a value x where `0 ≤ x ≤ 1`.
-function zutil.easeInExpo(x)
+--Simple easing function. Supply a value `x` where `0 ≤ x ≤ 1`.
+function zutil.easing.easeInExpo(x)
     return (x == 0 and 0 or 2^(10 * x - 10))
 end
 
---Simple easing function. Supply a value x where `0 ≤ x ≤ 1`.
-function zutil.easeInOutCubic(x)
+--Simple easing function. Supply a value `x` where `0 ≤ x ≤ 1`.
+function zutil.easing.easeOutExpo(x)
+    return (x == 1 and 1 or 1 - 2^(-10 * x))
+end
+
+--Simple easing function. Supply a value `x` where `0 ≤ x ≤ 1`.
+function zutil.easing.easeInOutCubic(x)
     return (x < 0.5 and 4 * x^3 or 1 - (-2 * x + 2)^3 / 2)
 end
 
@@ -71,7 +82,7 @@ function zutil.lerp(a, b, t)
 end
 
 --Supply a maximum `a`, a minimum `b`, and a value `x`. Returns `(x - a) / (b - a)`. This function is a rearranged form of `x = f(a,b,t)`, here as `t = g(a,b,x)`.
-function zutil.reverseLerp(a, b, x)
+function zutil.reverselerp(a, b, x)
     return (x - a) / (b - a)
 end
 
@@ -85,7 +96,7 @@ function zutil.distance(x1, y1, x2, y2)
     return math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
 end
 
---Displays data about supplied variables. Requires Love2D. Supply any non-function variables you wish. Returns a string containing general data about each variable, split over multiple lines.
+--Displays data about supplied variables. Requires Love2D. Supply any non-function variables you wish. Returns a string containing one data point about each variable, split over multiple lines.
 function zutil.varDisplay(...)
     local t = {...}
     local text = ""
@@ -104,7 +115,7 @@ function zutil.varDisplay(...)
 end
 
 --Supply a pair of coordinates. Returns the angle between them in radians.
-function zutil.angleBetween(x1, y1, x2, y2)
+function zutil.anglebetween(x1, y1, x2, y2)
 ---@diagnostic disable-next-line: deprecated
     return math.atan2(x2 - x1, y2 - y1)
 end
@@ -153,11 +164,11 @@ function zutil.split(str, separator)
     return t
 end
 
---Requires Löve2D. Loads SFX with types .wav, .mp3, or .ogg from the desired directory into the supplied `sfxTable`. Returns `sfxTable`.
-function zutil.loadsfx(directory, sfxTable)
+--Requires Löve2D. Loads SFX with fle type `fileType` (suffix, like ".wav" or ".ogg") from the desired directory into the supplied `sfxTable`. Returns `sfxTable`.
+function zutil.loadsfx(directory, sfxTable, fileType)
     for _, name in ipairs(love.filesystem.getDirectoryItems(directory)) do
         local suffix = zutil.split(name,".")[2]
-        if suffix ~= "wav" and suffix ~= "mp3" and suffix ~= "ogg" then     goto next     end
+        if suffix ~= fileType then     goto next     end
         sfxTable[zutil.split(name,".")[1]] = love.audio.newSource(directory.."/"..name)
         ::next::
     end
@@ -175,29 +186,35 @@ function zutil.playsfx(sfx, volume, pitch)
     return isPlaying
 end
 
---Supply a value `x`, `a`, and `b`. Returns x wrapped between a and b.
+--Supply a value `x`, `a`, and `b`. Returns `x` wrapped between `a` and `b`.
 function zutil.wrap(x, a, b)
     if x < a then return zutil.wrap(b - (a - x) + 1, a, b)
     elseif x > b then return zutil.wrap(a + (x - b) - 1, a, b)
     else return x end
 end
 
---Initialises a global variable `graphics = love.graphics`.
+--Requires Löve2D. Initialises a global variable `graphics = love.graphics`.
 function zutil.abbreviatelove2dgraphics()
 ---@diagnostic disable-next-line: lowercase-global
     graphics = love.graphics
 end
 
---Supply a value `x` and an integer `placeValue` (1). Returns x floored to the placeValue supplied. For example: `zutil.floor(5.6, 1) = 5`, `zutil.floor(91, 2) = 90`, `zutil.floor(220, 3) = 200`.
+--Supply a value `x` and an integer `placeValue` (1). Returns x truncated to the `placeValue` supplied. For example: `zutil.floor(5.6, 1) = 5`, `zutil.floor(91, 2) = 90`, `zutil.floor(220, 3) = 200`.
 function zutil.floor(x, placeValue)
     placeValue = (placeValue and placeValue - 1 or 1)
     return math.floor(x/10^placeValue)*10^placeValue
 end
 
---Supply a timer table `timer`, a function `completeFunction`, and the delta-time `dt`. `timer` must have fields `current: number` and `max: number`. This function returns the timer incremented
-function zutil.updatetimer(timer, completeFunction, dt)
+--Supply a value `x` and an integer `placeValue` (1). Returns x rounded up to the `placeValue` supplied. For example: `zutil.ceiling(5.6, 1) = 6`, `zutil.ceiling(91, 2) = 100`, `zutil.ceiling(220, 3) = 300`.
+function zutil.ceiling(x, placeValue)
+    placeValue = (placeValue and placeValue - 1 or 1)
+    return math.ceil(x/10^placeValue)*10^placeValue
+end
+
+--Supply a timer table `timer`, a function `completeFunction`, a number `speed` to increment by, and the delta-time `dt`. `timer` must have fields `current: number` and `max: number`. This function returns the `current` field of the timer incremented by `dt * speed`.
+function zutil.updatetimer(timer, completeFunction, speed, dt)
     assert(timer.current and timer.max, "Timer table supplied must have fields 'current' and 'max'.")
-    timer.current = timer.current + dt
+    timer.current = timer.current + speed * dt
     if timer.current > timer.max then
         timer.current = timer.current - timer.max
         completeFunction()
@@ -224,6 +241,73 @@ function zutil.search(t, v)
         end
     end
     return nil
+end
+
+--Returns the number of elements in table `t`, ignoring elements with a field `disabled = true`.
+function zutil.count(t)
+    local n = 0
+    for _, value in ipairs(t) do
+        if not value.disabled then n = n + 1 end
+    end
+    return n
+end
+
+--Returns "You're welcome!"
+function zutil.thanks()
+    return "You're welcome!"
+end
+
+--Returns `t` with the elements of `tSprinkle` randomly placed within.
+function zutil.sprinkle(t, tSprinkle)
+    for _, value in ipairs(tSprinkle) do
+        table.insert(t, math.random(#t), value)
+    end
+    return t
+end
+
+--Returns a clone of table `t`, not sharing a memory adress with `t`.
+function zutil.clone(t)
+    local newt = {}
+    for key, value in pairs(t) do newt[key] = value end
+    return newt
+end
+
+--Returns `nilv` if `x` is nil, otherwise returns `v`.
+function zutil.nilcheck(x, v, nilv)
+    return (x and v or nilv)
+end
+
+--Returns a table containing all English letters (without diacratics) in lowercase.
+function zutil.letters()
+    local t = {}
+    local letters = "abcdefghijklmnopqrstuvwxyz"
+    for i = 1, #letters do t[#t+1] = string.sub(letters,i,i) end
+    return t
+end
+
+--Returns `x` if `x > 0`, otherwise returns `0`.
+function zutil.relu(x)
+    if x < 0 then return 0
+    else return x end
+end
+
+--Returns a random value from table `t`, where the values of `t` are fields equal to their weight. For example, with `zutil.weighted({ lion = 2, bear = 1 })`, this function is two times more likely to return `"lion"` than `"bear"`.
+function zutil.weighted(t)
+    local pool = {}
+    for key, weight in pairs(t) do
+        for _ = 1, weight do pool[#pool+1] = key end
+    end
+    return pool[math.random(#pool)]
+end
+
+--Supply a percentage `trueWeight` where `0 ≤ trueWeight ≤ 100`. Returns `true` `trueWeight`% of the time.
+function zutil.weightedbool(trueWeight)
+    return math.random(0,100) <= trueWeight
+end
+
+--Returns a random element from table `t`.
+function zutil.randomchoice(t)
+    return t[math.random(#t)]
 end
 
 

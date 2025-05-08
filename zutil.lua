@@ -24,7 +24,7 @@
 
 ---@diagnostic disable: undefined-global
 
-local zutil = { _version = "1.0" }
+local zutil = { _version = "1.0", easing = {} }
 
 
 

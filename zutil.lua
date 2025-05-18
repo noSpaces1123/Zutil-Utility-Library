@@ -169,7 +169,7 @@ function zutil.loadsfx(directory, sfxTable, fileType)
     for _, name in ipairs(love.filesystem.getDirectoryItems(directory)) do
         local suffix = zutil.split(name,".")[2]
         if suffix ~= fileType then     goto next     end
-        sfxTable[zutil.split(name,".")[1]] = love.audio.newSource(directory.."/"..name)
+        sfxTable[zutil.split(name,".")[1]] = love.audio.newSource(directory.."/"..name, "static")
         ::next::
     end
     return sfxTable
@@ -216,8 +216,10 @@ function zutil.updatetimer(timer, completeFunction, speed, dt)
     assert(timer.current and timer.max, "Timer table supplied must have fields 'current' and 'max'.")
     timer.current = timer.current + speed * dt
     if timer.current > timer.max then
-        timer.current = timer.current - timer.max
-        if completeFunction then completeFunction() end
+        repeat
+            timer.current = timer.current - timer.max
+            if completeFunction then completeFunction() end
+        until timer.current < timer.max
     end
     return timer
 end
